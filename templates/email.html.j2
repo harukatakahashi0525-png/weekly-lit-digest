@@ -56,7 +56,7 @@
     <ul class="pts">
       {% for pt in p.points %}<li><b>{{ ["目的","方法","結果"][loop.index0] if loop.index0 < 3 else "" }}</b>{{ pt }}</li>{% endfor %}
     </ul>
-    {% if p.abstract_ja %}<div class="abs"><span class="lbl">アブストラクト全訳(機械翻訳)</span>{{ p.abstract_ja }}</div>{% endif %}
+    {% if p.abstract_ja and p.abstract_ja != "(抄録なし)" %}<div class="abs"><span class="lbl">アブストラクト全訳(機械翻訳)</span>{{ p.abstract_ja }}</div>{% endif %}
     <div class="meta" style="margin-top:8px">
       {{ p.authors_short }}
       ・ <a href="https://pubmed.ncbi.nlm.nih.gov/{{ p.pmid }}/">PubMed</a>

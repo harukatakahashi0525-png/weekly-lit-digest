@@ -136,7 +136,7 @@ function render() {
       <div class="en"><a href="https://pubmed.ncbi.nlm.nih.gov/${esc(p.pmid)}/" target="_blank" rel="noopener">${hl(p.title)}</a></div>
       ${p.title_ja ? `<div class="ja">${hl(p.title_ja)}</div>` : ""}
       <ul class="pts">${(p.points||[]).map((t,i) => `<li><b>${LBL[i]||""}</b>${hl(t)}</li>`).join("")}</ul>
-      ${p.abstract_ja ? `<details><summary>アブストラクト全訳</summary><div class="abs">${hl(p.abstract_ja)}</div></details>` : ""}
+      ${p.abstract_ja && p.abstract_ja !== "(抄録なし)" ? `<details><summary>アブストラクト全訳</summary><div class="abs">${hl(p.abstract_ja)}</div></details>` : ""}
       <div class="foot">
         <span>${esc(p.authors_short)}</span>
         <a href="https://pubmed.ncbi.nlm.nih.gov/${esc(p.pmid)}/" target="_blank" rel="noopener">PubMed</a>
