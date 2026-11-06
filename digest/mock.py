@@ -1,9 +1,6 @@
 """--mock 用のサンプルデータ(レイアウト確認用の架空の論文。実在しません)."""
 from __future__ import annotations
 
-import json
-from types import SimpleNamespace
-
 from .pubmed import parse_efetch
 
 _XML = """<?xml version="1.0"?>
@@ -49,23 +46,19 @@ def papers() -> list[dict]:
     return recs
 
 
-class FakeClient:
-    """anthropic.Anthropic().messages.create の代わり."""
-
-    def __init__(self):
-        self.messages = self
-
-    def create(self, **kw):
-        title = kw["messages"][0]["content"].split("Title: ")[1].split("\n")[0]
-        row = next(r for r in _ROWS if r[3] == title)
-        out = {
-            "title_ja": "【サンプル】" + title.replace("[SAMPLE] ", "") + "(日本語タイトルがここに入ります)",
+def fake_summaries() -> list[dict]:
+    """和訳のサンプル(最後の 1 本はわざと未訳のまま残す)."""
+    out = []
+    for r in _ROWS[:-1]:
+        out.append({
+            "pmid": r[0],
+            "title_ja": "【サンプル】" + r[3].replace("[SAMPLE] ", "") + "(日本語タイトルがここに入ります)",
             "points": [
                 "ここに「何を調べたか」が1文で入ります。",
                 "ここに研究デザイン・対象・人数が入ります(例: 多施設コホート、n=12,345)。",
                 "ここに主な結果が数値つきで入ります(例: 調整OR 1.23[95%CI 1.05–1.44])。",
             ],
             "abstract_ja": "【背景】ここにアブストラクトの全訳が入ります。\n【方法】……\n【結果】……\n【結論】……",
-            "topics": row[5], "design": row[6], "relevant": row[7],
-        }
-        return SimpleNamespace(content=[SimpleNamespace(type="text", text=json.dumps(out, ensure_ascii=False))])
+            "topics": r[5], "design": r[6], "relevant": r[7],
+        })
+    return out

@@ -1,126 +1,50 @@
-# 週刊 文献ダイジェスト
+# 週刊 文献ダイジェスト(Claude API なし版)
 
-毎週月曜 8:00(日本時間)に、指定ジャーナル・テーマの新着論文を PubMed から集め、
-**日本語タイトル・3行要点(目的/方法/結果)・アブストラクト全訳** を付けてメールで届けます。
-同じ内容が、検索・ブックマークできる **ダッシュボード(Web ページ)** にも毎週たまっていきます。
+関連ジャーナルの新着論文を毎週集め、**日本語タイトル・3行要点(目的/方法/結果)・アブストラクト全訳** を付けて
+メールとダッシュボードで届けます。和訳は Claude のプラン内(スケジュールタスク)で行うので、API キーは不要です。
 
 ```
-PubMed 検索 → Claude で要約・翻訳 → Gmail で送信
-                                  └→ ダッシュボード(GitHub Pages)を更新
+日曜 22:00  GitHub が PubMed から新着を取得 → inbox/pending.json   (.github/workflows/fetch.yml)
+月曜 朝     Claude のスケジュールタスクが和訳 → ダッシュボード更新 → push   (TRANSLATE.md の手順)
+            push をきっかけに GitHub が Gmail でメール送信          (.github/workflows/send.yml)
 ```
 
-すべて GitHub 上で自動実行されるので、PC の電源が切れていても届きます。
-
----
+ダッシュボード: https://harukatakahashi0525-png.github.io/weekly-lit-digest/
 
 ## 拾う論文(config.yaml で変更可)
 
 | 区分 | 対象 | 取り方 |
 |---|---|---|
 | ① 全件 | Resuscitation, Resuscitation Plus, Prehospital Emergency Care, Scand J Trauma Resusc Emerg Med, Emerg Med J, Acute Medicine & Surgery | 新着をすべて |
-| ② キーワード | JAMA, JAMA Netw Open, Circulation, Critical Care, Crit Care Med, Ann Emerg Med, NEJM, Lancet | 心停止・CPR・AED・バイスタンダー・熱中症・EMS・救急救命士・病院前・救急車・指令 などがタイトル/抄録にあるもの |
-| ③ 全誌 | 上記以外のすべての雑誌 | タイトルに OHCA・バイスタンダーCPR・熱中症・EMS・paramedic を含むもの(週 40 本まで) |
+| ② キーワード | JAMA, JAMA Netw Open, Circulation, Critical Care, Crit Care Med, Ann Emerg Med, NEJM, Lancet | 心停止・CPR・AED・バイスタンダー・熱中症・EMS・救急救命士・病院前・救急車・指令 など |
+| ③ 全誌 | 上記以外のすべての雑誌 | タイトルに OHCA・バイスタンダーCPR・熱中症・EMS・paramedic(週 40 本まで) |
 
-- ②③は、Claude が「キーワードが偶然一致しただけ」と判断したものを自動で外します。
-- 訂正記事・コメント・エディトリアル・ニュースは除外します。
-- 「AI in prehospital」の論文は ②③ で拾い、「AI・デジタル」タグを付けます。
+- 和訳は週 60 本まで(①→②→③の順)。超えた分はタイトルとリンクだけ載ります(`max_translate_per_week`)
+- ②③で「キーワードが偶然一致しただけ」のものは除外します
+- 訂正記事・コメント・エディトリアル・ニュースは除外します
 
----
+## GitHub 側の設定(1 回だけ)
 
-## 初回の設定(30 分ほど・1 回だけ)
-
-### 1. 必要なものを用意する
-
-| 必要なもの | 取得先 | 備考 |
-|---|---|---|
-| GitHub アカウント | https://github.com | 無料 |
-| Anthropic API キー | https://console.anthropic.com → API Keys | 従量課金。事前にクレジット購入が必要 |
-| Gmail のアプリパスワード | https://myaccount.google.com/apppasswords | Google アカウントの **2 段階認証をオン** にしてから作成。16 桁 |
-| (任意)NCBI API キー | https://www.ncbi.nlm.nih.gov/account/settings/ | なくても動きます。あると PubMed 取得が速く安定 |
-
-### 2. GitHub にリポジトリを作ってファイルを入れる
-
-1. GitHub 右上「+」→ **New repository**
-   - 名前: 例 `weekly-lit-digest`
-   - **Public** を選ぶ(無料プランでダッシュボードを公開するため。下の「公開範囲」参照)
-2. 作成後の画面で **uploading an existing file** をクリック。zip を解凍してできた `weekly-lit-digest` フォルダを開き、**その中身をすべて**(`weekly-lit-digest` フォルダそのものではなく)ドラッグ&ドロップ → **Commit changes**
-   - ⚠️ `.github` フォルダは「隠しフォルダ」です。Mac の Finder では **⌘ + Shift + .(ピリオド)** で表示させてから一緒にドラッグしてください
-   - うまく入らない場合: **Add file → Create new file** でファイル名に `.github/workflows/weekly.yml` と入力し、同名ファイルの中身を貼り付け
-
-### 3. 鍵(Secrets)を登録する
-
-リポジトリの **Settings → Secrets and variables → Actions → New repository secret** で、次を 1 つずつ登録:
-
-| Name | 値 |
-|---|---|
-| `ANTHROPIC_API_KEY` | Anthropic の API キー |
-| `GMAIL_ADDRESS` | 送信元の Gmail アドレス |
-| `GMAIL_APP_PASSWORD` | 16 桁のアプリパスワード(スペースなし) |
-| `MAIL_TO` | (任意)送信先。複数ならカンマ区切り。省略すると自分宛て |
-| `NCBI_API_KEY` | (任意)NCBI の API キー |
-
-### 4. 書き込み権限をオンにする
-
-**Settings → Actions → General → Workflow permissions** で **Read and write permissions** を選び **Save**。
-(ダッシュボードのデータを毎週自動で更新するため)
-
-### 5. ダッシュボードを公開する
-
-1. **Settings → Pages** → Source を **Deploy from a branch**、Branch を **main** / **/docs** にして **Save**
-2. 数分後に表示される URL(`https://ユーザー名.github.io/weekly-lit-digest/`)をコピー
-3. `config.yaml` の `dashboard_url: ""` にその URL を貼って保存(GitHub 上で鉛筆アイコンから編集できます)
-   → メール冒頭に「ダッシュボードで見る」ボタンが付きます
-
-### 6. 試しに動かす
-
-1. **Actions** タブ → 左の **週刊文献ダイジェスト** → 右の **Run workflow**
-2. まず **「メールを送らずに試す」にチェック** して実行 → 完了後、実行結果ページ下部の **email-preview** をダウンロードして中身を確認
-3. 問題なければ、チェックを外してもう一度実行 → メールが届けば完了
-
-以降は毎週月曜 8:00 に自動で届きます(GitHub の混雑で数十分遅れることがあります)。
-
----
+1. **Settings → Actions → General → Workflow permissions** を **Read and write permissions** にして Save
+2. **Settings → Pages** で Branch を **main** / **/docs** にして Save
+3. メールも受け取る場合: Gmail の **アプリパスワード**(https://myaccount.google.com/apppasswords、2 段階認証が必要)を作り、
+   **Settings → Secrets and variables → Actions → New repository secret** で
+   `GMAIL_ADDRESS`(Gmail アドレス)と `GMAIL_APP_PASSWORD`(16 文字)を登録。
+   未登録ならメールは送らず、ダッシュボードだけ更新されます
 
 ## よくある変更
 
-すべて `config.yaml` を編集して保存するだけです。
+`config.yaml` を編集するだけです(Claude にチャットで頼めば直接直します)。
 
-- **ジャーナルを増やす/減らす**: `journals_all` か `journals_filtered` に PubMed の略誌名を追加/削除
-  (略誌名は https://www.ncbi.nlm.nih.gov/nlmcatalog/journals で確認)
-- **キーワードを変える**: `keywords`(②用)、`title_keywords_any_journal`(③用)
-- **③をやめる**: `title_keywords_any_journal: []`
-- **費用を抑える**: `claude_model: claude-haiku-5-5`(精度はやや下がります)
-- **配信曜日・時刻を変える**: `.github/workflows/weekly.yml` の `cron`(UTC 表記。日本時間 −9 時間)
+- ジャーナル: `journals_all` / `journals_filtered`(PubMed 略誌名)
+- キーワード: `keywords`(②)、`title_keywords_any_journal`(③、不要なら `[]`)
+- 和訳の上限: `max_translate_per_week`
+- 取得の曜日・時刻: `.github/workflows/fetch.yml` の `cron`(UTC。日本時間 −9 時間)
 
----
+## 手動で動かす
 
-## 公開範囲について
-
-- 無料プランの GitHub Pages は **リポジトリを Public にする必要があります**。URL を知っていれば誰でも見られます(検索エンジンには載らない設定にしてあります)。
-- 抄録は出版社の著作物なので、初期設定では **ダッシュボードには「日本語タイトル・3行要点・リンク」だけ** を載せ、**アブストラクト全訳はメールだけ** に載せています。
-  自分専用と割り切って全訳もページに載せたい場合は `publish_full_abstract: true`。
-- API キーやパスワードは Secrets に入れているので、Public でも外からは見えません。
-
----
-
-## 困ったとき
-
-| 症状 | 確認すること |
-|---|---|
-| メールが来ない | Actions タブで赤い ✗ がないか。`GMAIL_APP_PASSWORD` が通常のパスワードになっていないか |
-| `authentication_error` | `ANTHROPIC_API_KEY` の貼り間違い、クレジット残高 |
-| ダッシュボードが空 | 手順 4(書き込み権限)と手順 5(Pages)の設定 |
-| 自動実行が止まった | 長期間リポジトリに動きがないと GitHub が自動実行を止めることがあります。Actions タブで **Enable workflow** |
-| 論文が多すぎる/少なすぎる | `keywords` を絞る/増やす、`any_journal_max` を調整 |
-
-手元(Python 3.10 以上)での確認:
-
-```bash
-pip install -r requirements.txt
-python -m digest.main --mock      # ネットも API も使わずサンプルで動作確認 → output/email.html
-python -m digest.main --dry-run   # 本番データで実行、メールは送らない(要 ANTHROPIC_API_KEY)
-```
-
----
+- 今すぐ取得: **Actions → ① 新着論文を取得 → Run workflow**
+- メール再送: **Actions → ② メールを送信 → Run workflow**
+- 手元でのテスト: `pip install -r requirements.txt && python -m digest.main selftest`
 
 ※ 要約・翻訳は Claude による自動生成です。数値や結論は必ず原文で確認してください。

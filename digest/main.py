@@ -1,145 +1,252 @@
-"""週刊文献ダイジェスト 本体.
+"""週刊文献ダイジェスト(Claude API なし版).
 
-  python -m digest.main              # 本番(PubMed 取得 → 要約 → メール送信 → ダッシュボード更新)
-  python -m digest.main --dry-run    # メールを送らず output/email.html に書き出すだけ
-  python -m digest.main --mock       # ネットも API も使わずサンプルデータで動作確認
+  python -m digest.main fetch        # [GitHub Actions] PubMed から新着を取得 → inbox/pending.json
+  python -m digest.main status       # [Claude] 未訳の件数
+  python -m digest.main next 8       # [Claude] 次に和訳する論文を表示
+  python -m digest.main save F.json  # [Claude] 和訳(JSON 配列)を保存
+  python -m digest.main build        # [Claude] メール本文・ダッシュボードを作成し inbox を空にする
+  python -m digest.main send         # [GitHub Actions] outbox/ のメールを Gmail で送信
+  python -m digest.main selftest     # ネットなしでサンプルを使った通しテスト
 """
 from __future__ import annotations
 
-import argparse
 import json
-from datetime import date, datetime, timedelta, timezone
+import os
+import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
-from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from . import pubmed
-from .summarize import TOPICS, summarize_all
+from .schema import TOPICS, normalize
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "docs" / "data" / "papers.json"
-SEEN = ROOT / "state" / "seen.json"
-OUT = ROOT / "output"
+BASE = Path(os.getenv("DIGEST_BASE", ROOT))  # selftest 時は一時フォルダ
 JST = timezone(timedelta(hours=9))
 TIER_ORDER = {"all": 0, "filtered": 1, "any": 2}
 
 
-def load_json(path: Path, default):
-    return json.loads(path.read_text("utf-8")) if path.exists() else default
+def P(rel: str) -> Path:
+    return BASE / rel
 
 
-def authors_short(authors: list[str]) -> str:
-    if not authors:
-        return ""
-    return ", ".join(authors[:3]) + (" et al." if len(authors) > 3 else "")
+def load(rel: str, default):
+    p = P(rel)
+    return json.loads(p.read_text("utf-8")) if p.exists() else default
 
 
-def group_by_topic(papers: list[dict]) -> list[dict]:
+def dump(rel: str, obj) -> None:
+    p = P(rel)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(obj, ensure_ascii=False, indent=1), "utf-8")
+
+
+def cfg() -> dict:
+    return yaml.safe_load((ROOT / "config.yaml").read_text("utf-8"))
+
+
+def today():
+    return datetime.now(JST).date()
+
+
+# ------------------------------------------------------------------ fetch
+def cmd_fetch(mock: bool = False) -> None:
+    c = cfg()
+    db = load("docs/data/papers.json", {"papers": []})
+    pending = load("inbox/pending.json", [])
+    seen = set(load("state/seen.json", [])) | {p["pmid"] for p in db["papers"]} | {p["pmid"] for p in pending}
+
+    if mock:
+        from . import mock as mk
+        new = [p for p in mk.papers() if p["pmid"] not in seen]
+    else:
+        from . import pubmed
+        new = pubmed.fetch_new(c, seen, today())
+
+    new.sort(key=lambda p: TIER_ORDER.get(p["tier"], 9))
+    anys = [p for p in new if p["tier"] == "any"]
+    cap = int(c.get("any_journal_max", 40))
+    if len(anys) > cap:
+        drop = {p["pmid"] for p in anys[cap:]}
+        new = [p for p in new if p["pmid"] not in drop]
+
+    pending += new
+    pending.sort(key=lambda p: TIER_ORDER.get(p["tier"], 9))
+    dump("inbox/pending.json", pending)
+    print(f"新着 {len(new)} 本を追加(未処理 計 {len(pending)} 本)")
+
+
+# ------------------------------------------------------------------ translate helpers
+def _todo() -> list[dict]:
+    c = cfg()
+    pending = load("inbox/pending.json", [])
+    done = load("inbox/summaries.json", {})
+    limit = int(c.get("max_translate_per_week", 60))
+    return [p for p in pending[:limit] if p["pmid"] not in done]
+
+
+def cmd_status() -> None:
+    pending = load("inbox/pending.json", [])
+    done = load("inbox/summaries.json", {})
+    todo = _todo()
+    print(f"取得済み {len(pending)} 本 / 和訳済み {len(done)} 本 / 残り {len(todo)} 本"
+          f"(上限 {cfg().get('max_translate_per_week', 60)} 本)")
+
+
+def cmd_next(n: int) -> None:
+    todo = _todo()
+    if not todo:
+        print("残り 0 本。build に進んでください。")
+        return
+    for p in todo[:n]:
+        print(json.dumps({
+            "pmid": p["pmid"], "tier": p["tier"], "journal": p["journal"],
+            "pub_types": p.get("pub_types", []), "title": p["title"],
+            "abstract": p["abstract"] or "(no abstract)",
+        }, ensure_ascii=False))
+        print()
+    print(f"--- 表示 {min(n, len(todo))} 本 / 残り {len(todo)} 本 ---")
+
+
+def cmd_save(path: str) -> None:
+    raw = json.loads(Path(path).read_text("utf-8"))
+    if isinstance(raw, dict):
+        raw = [raw]
+    done = load("inbox/summaries.json", {})
+    ok, errs = 0, []
+    for d in raw:
+        try:
+            s = normalize(d)
+            done[s["pmid"]] = s
+            ok += 1
+        except ValueError as e:
+            errs.append(str(e))
+    dump("inbox/summaries.json", done)
+    print(f"保存 {ok} 本。残り {len(_todo())} 本")
+    for e in errs:
+        print("  エラー:", e)
+    if errs:
+        sys.exit(1)
+
+
+# ------------------------------------------------------------------ build
+def _authors_short(a: list[str]) -> str:
+    return ", ".join(a[:3]) + (" et al." if len(a) > 3 else "") if a else ""
+
+
+def cmd_build() -> None:
+    from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+    c = cfg()
+    week = today().isoformat()
+    pending = load("inbox/pending.json", [])
+    done = load("inbox/summaries.json", {})
+
+    papers, dropped = [], 0
+    for p in pending:
+        s = done.get(p["pmid"])
+        if s:
+            if c.get("drop_irrelevant", True) and p["tier"] != "all" and not s["relevant"]:
+                dropped += 1
+                continue
+            p.update(s)
+        else:  # 上限超えなどで未訳
+            p.update({"title_ja": "", "points": [], "abstract_ja": "", "topics": ["未翻訳(タイトルのみ)"],
+                      "design": "未翻訳"})
+        p["authors_short"] = _authors_short(p.get("authors", []))
+        p["week"] = week
+        papers.append(p)
+
     groups = []
-    for t in TOPICS:
+    for t in TOPICS + ["未翻訳(タイトルのみ)"]:
         ps = [p for p in papers if p["topics"][0] == t]
         if ps:
             ps.sort(key=lambda p: (TIER_ORDER.get(p["tier"], 9), p["journal"]))
             groups.append({"topic": t, "papers": ps})
-    return groups
 
-
-def plain_text(week: str, groups: list[dict]) -> str:
-    lines = [f"週刊 文献ダイジェスト {week}", ""]
-    for g in groups:
-        lines.append(f"■ {g['topic']}")
-        for p in g["papers"]:
-            lines += [f"- {p.get('title_ja') or p['title']}", f"  {p['journal']}  https://pubmed.ncbi.nlm.nih.gov/{p['pmid']}/"]
-        lines.append("")
-    return "\n".join(lines)
-
-
-def run(dry_run: bool, mock: bool) -> None:
-    global DATA, SEEN
-    if mock:  # 本番データを汚さないよう、サンプル実行は output/ に書く
-        DATA, SEEN = OUT / "mock" / "papers.json", OUT / "mock" / "seen.json"
-    cfg = yaml.safe_load((ROOT / "config.yaml").read_text("utf-8"))
-    today = datetime.now(JST).date()
-    week = today.isoformat()
-
-    db = load_json(DATA, {"updated": "", "papers": []})
-    seen = set(load_json(SEEN, []))
-    seen |= {p["pmid"] for p in db["papers"]}
-
-    # 1) 取得
-    if mock:
-        from . import mock as mk
-        papers = [p for p in mk.papers() if p["pmid"] not in seen]
-    else:
-        papers = pubmed.fetch_new(cfg, seen, today)
-    print(f"新着候補: {len(papers)} 本")
-
-    # 2) 要約・翻訳
-    if papers:
-        client = None
-        if mock:
-            from . import mock as mk
-            client = mk.FakeClient()
-        summarize_all(papers, cfg.get("claude_model", "claude-sonnet-5-5"), client=client)
-
-    # 3) 無関係なものを除外、③の上限
-    fetched_ids = [p["pmid"] for p in papers]
-    if cfg.get("drop_irrelevant", True):
-        dropped = [p for p in papers if p["tier"] != "all" and not p["relevant"]]
-        papers = [p for p in papers if p not in dropped]
-        print(f"無関係として除外: {len(dropped)} 本")
-    anys = [p for p in papers if p["tier"] == "any"]
-    cap = int(cfg.get("any_journal_max", 40))
-    if len(anys) > cap:
-        drop = {p["pmid"] for p in anys[cap:]}
-        papers = [p for p in papers if p["pmid"] not in drop]
-
-    for p in papers:
-        p["authors_short"] = authors_short(p["authors"])
-        p["week"] = week
-
-    # 4) メール
-    groups = group_by_topic(papers)
     env = Environment(loader=FileSystemLoader(ROOT / "templates"), autoescape=select_autoescape(["html", "j2"]))
     html = env.get_template("email.html.j2").render(
         week=week, total=len(papers), groups=groups,
-        since=(today - timedelta(days=int(cfg.get("lookback_days", 8)))).isoformat(), until=week,
-        dashboard_url=cfg.get("dashboard_url", ""),
+        since=(today() - timedelta(days=int(c.get("lookback_days", 8)))).isoformat(), until=week,
+        dashboard_url=c.get("dashboard_url", ""),
     )
-    OUT.mkdir(exist_ok=True)
-    (OUT / "email.html").write_text(html, "utf-8")
-    subject = f"{cfg.get('mail_subject_prefix', '')}{week} 新着 {len(papers)} 本"
-    if dry_run or mock:
-        print(f"[dry-run] メールは送らず output/email.html に保存: {subject}")
-    else:
-        from .mailer import send
-        send(subject, html, plain_text(week, groups))
-        print(f"メール送信: {subject}")
+    P("outbox").mkdir(parents=True, exist_ok=True)
+    P("outbox/email.html").write_text(html, "utf-8")
+    P("outbox/subject.txt").write_text(f"{c.get('mail_subject_prefix', '')}{week} 新着 {len(papers)} 本", "utf-8")
 
-    # 5) ダッシュボード用データ更新(公開されるので英文抄録は載せない)
-    keep_full = bool(cfg.get("publish_full_abstract", False))
+    keep_full = bool(c.get("publish_full_abstract", False))
     fields = ["pmid", "week", "tier", "journal", "journal_full", "pubdate", "title", "title_ja",
               "points", "topics", "design", "authors_short", "doi"] + (["abstract_ja"] if keep_full else [])
-    new_rows = [{k: p.get(k) for k in fields} for p in papers]
-    db["papers"] = new_rows + db["papers"]
+    db = load("docs/data/papers.json", {"papers": []})
+    db["papers"] = [{k: p.get(k) for k in fields} for p in papers] + db["papers"]
     db["updated"] = datetime.now(JST).isoformat(timespec="minutes")
     db["weeks"] = sorted({p["week"] for p in db["papers"]}, reverse=True)
-    DATA.parent.mkdir(parents=True, exist_ok=True)
-    DATA.write_text(json.dumps(db, ensure_ascii=False, indent=1), "utf-8")
+    dump("docs/data/papers.json", db)
 
-    # 除外したものも「処理済み」にして、翌週また要約しないようにする
-    SEEN.parent.mkdir(parents=True, exist_ok=True)
-    SEEN.write_text(json.dumps(sorted(seen | set(fetched_ids)), indent=0), "utf-8")
-    print(f"ダッシュボード: 累計 {len(db['papers'])} 本")
+    seen = set(load("state/seen.json", [])) | {p["pmid"] for p in pending}
+    dump("state/seen.json", sorted(seen))
+    dump("inbox/pending.json", [])
+    dump("inbox/summaries.json", {})
+    print(f"メール本文を作成: {len(papers)} 本(無関係として除外 {dropped} 本)。ダッシュボード累計 {len(db['papers'])} 本")
+
+
+# ------------------------------------------------------------------ send
+def cmd_send() -> None:
+    if not (os.getenv("GMAIL_ADDRESS") and os.getenv("GMAIL_APP_PASSWORD")):
+        print("GMAIL_ADDRESS / GMAIL_APP_PASSWORD が未設定のため、メール送信をスキップします")
+        return
+    from .mailer import send
+    subject = P("outbox/subject.txt").read_text("utf-8").strip()
+    html = P("outbox/email.html").read_text("utf-8")
+    send(subject, html, "HTML 対応のメールソフトでご覧ください。")
+    print("送信しました:", subject)
+
+
+# ------------------------------------------------------------------ selftest
+def cmd_selftest() -> None:
+    import shutil
+    import subprocess
+    import tempfile
+
+    from . import mock as mk
+    tmp = Path(tempfile.mkdtemp())
+    env = {**os.environ, "DIGEST_BASE": str(tmp)}
+    run = lambda *a: subprocess.run([sys.executable, "-m", "digest.main", *a], env=env, cwd=ROOT, check=True)  # noqa: E731
+    run("fetch", "--mock")
+    run("next", "3")
+    batch = tmp / "batch.json"
+    batch.write_text(json.dumps(mk.fake_summaries(), ensure_ascii=False), "utf-8")
+    run("save", str(batch))
+    run("status")
+    run("build")
+    run("fetch", "--mock")  # 2 回目は重複なしで 0 本になるはず
+    out = ROOT / "output"
+    out.mkdir(exist_ok=True)
+    shutil.copy(tmp / "outbox/email.html", out / "email.html")
+    shutil.copy(tmp / "docs/data/papers.json", out / "papers.json")
+    print("OK: output/email.html と output/papers.json を確認してください")
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--mock", action="store_true")
-    a = ap.parse_args()
-    run(a.dry_run, a.mock)
+    a = sys.argv[1:] or ["status"]
+    cmd = a[0]
+    if cmd == "fetch":
+        cmd_fetch(mock="--mock" in a)
+    elif cmd == "status":
+        cmd_status()
+    elif cmd == "next":
+        cmd_next(int(a[1]) if len(a) > 1 else 8)
+    elif cmd == "save":
+        cmd_save(a[1])
+    elif cmd == "build":
+        cmd_build()
+    elif cmd == "send":
+        cmd_send()
+    elif cmd == "selftest":
+        cmd_selftest()
+    else:
+        print(__doc__)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

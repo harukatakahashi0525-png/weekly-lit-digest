@@ -80,8 +80,10 @@ exclude_publication_types:
   - Editorial
   - News
 
-# ---- 要約・翻訳(Claude API) --------------------------------------
-claude_model: claude-sonnet-5-5
+# ---- 要約・翻訳(毎週月曜朝、Claude のスケジュールタスクが実施) --------
+# 1 週間に和訳する上限。超えた分はタイトルとリンクだけ載せる(①→②→③の順に優先)
+#   多くするとプランの利用枠を多く使います
+max_translate_per_week: 60
 # ②③のキーワード一致分について、Claude が「研究テーマと無関係」と判断したものを除外する
 drop_irrelevant: true
 
