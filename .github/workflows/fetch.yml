@@ -5,6 +5,9 @@ on:
     # 毎週日曜 22:00(日本時間)= 13:00 UTC。月曜朝に Claude が和訳する
     - cron: "0 13 * * 0"
   workflow_dispatch:       # Actions 画面の「Run workflow」で手動実行もできる
+  push:
+    branches: [main]
+    paths: ["inbox/fetch-now.txt"]   # このファイルを更新して push すると今すぐ取得(Claude 用)
 
 permissions:
   contents: write
