@@ -87,11 +87,11 @@ drop_irrelevant: true
 
 # ---- ダッシュボード(GitHub Pages) --------------------------------
 # GitHub Pages の URL(メール本文にリンクを載せます)。設定後に書き換えてください
-dashboard_url: ""
+dashboard_url: "https://harukatakahashi0525-png.github.io/weekly-lit-digest/"
 # 公開ページにアブストラクト全訳まで載せるか。
 #   false(推奨): ページは「日本語タイトル・3行要点・リンク」のみ。全訳はメールだけに載せる
 #   true: ページにも全訳を載せる(出版社の著作物である抄録の翻訳を公開することになるので注意)
-publish_full_abstract: false
+publish_full_abstract: true
 
 # ---- メール ----------------------------------------------------------
 mail_subject_prefix: "【週刊文献】"
