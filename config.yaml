@@ -1,0 +1,97 @@
+# =============================================================
+#  週刊 文献ダイジェスト 設定ファイル
+#  ここを書き換えて GitHub に push すると、次回の実行から反映されます
+# =============================================================
+
+# 何日前までの新着を拾うか(毎週実行なので 7〜8 日。重複は自動で除外)
+lookback_days: 8
+
+# ---- ① 全件取得するジャーナル(新着はすべて載せる) ----------------
+#   PubMed の略誌名(NLM Title Abbreviation)で書きます
+journals_all:
+  - Resuscitation
+  - Resusc Plus
+  - Prehosp Emerg Care
+  - Scand J Trauma Resusc Emerg Med
+  - Emerg Med J
+  - Acute Med Surg
+
+# ---- ② キーワードに当たる論文だけ取得するジャーナル ----------------
+#   掲載数が多いので、下の keywords に当たるものだけに絞ります
+journals_filtered:
+  - JAMA
+  - JAMA Netw Open
+  - Circulation
+  - Crit Care
+  - Crit Care Med
+  - Ann Emerg Med
+  - N Engl J Med
+  - Lancet
+
+# ②で使うキーワード(タイトル・抄録のどこかに含まれれば対象)
+keywords:
+  - cardiac arrest
+  - cardiopulmonary resuscitation
+  - CPR
+  - basic life support
+  - AED
+  - defibrillation
+  - defibrillator
+  - bystander
+  - heat stroke
+  - heatstroke
+  - heat-related illness
+  - heat illness
+  - exertional heat
+  - emergency medical services
+  - EMS
+  - paramedic
+  - paramedics
+  - prehospital
+  - pre-hospital
+  - out-of-hospital
+  - ambulance
+  - dispatch
+  - dispatcher
+  # 「AI in prehospital」は上の prehospital / EMS / ambulance / dispatch で拾い、
+  # 要約時に「AI・デジタル」タグを付けます。"artificial intelligence" 単独で入れると
+  # JAMA Netw Open の無関係な AI 論文が大量に混ざるため、あえて入れていません
+
+# ---- ③ 上記以外の全ジャーナルからも拾うテーマ(タイトルに含むもの) ----
+#   熱中症や OHCA の論文は上記以外の雑誌にも多く出るため。
+#   不要なら空リスト [] にしてください
+title_keywords_any_journal:
+  - out-of-hospital cardiac arrest
+  - bystander CPR
+  - heat stroke
+  - heatstroke
+  - exertional heat illness
+  - heat-related illness
+  - emergency medical services
+  - paramedic
+
+# ③で 1 週間に載せる上限(多すぎると読めないため)
+any_journal_max: 40
+
+# ---- 除外する論文の種類(PubMed の Publication Type) -------------
+exclude_publication_types:
+  - Published Erratum
+  - Comment
+  - Editorial
+  - News
+
+# ---- 要約・翻訳(Claude API) --------------------------------------
+claude_model: claude-sonnet-5-5
+# ②③のキーワード一致分について、Claude が「研究テーマと無関係」と判断したものを除外する
+drop_irrelevant: true
+
+# ---- ダッシュボード(GitHub Pages) --------------------------------
+# GitHub Pages の URL(メール本文にリンクを載せます)。設定後に書き換えてください
+dashboard_url: ""
+# 公開ページにアブストラクト全訳まで載せるか。
+#   false(推奨): ページは「日本語タイトル・3行要点・リンク」のみ。全訳はメールだけに載せる
+#   true: ページにも全訳を載せる(出版社の著作物である抄録の翻訳を公開することになるので注意)
+publish_full_abstract: false
+
+# ---- メール ----------------------------------------------------------
+mail_subject_prefix: "【週刊文献】"

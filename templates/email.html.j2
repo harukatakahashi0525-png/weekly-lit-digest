@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{margin:0;background:#f4f2ee;font-family:"Hiragino Sans","Meiryo",Arial,sans-serif;color:#1f2328;line-height:1.65}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 14px}
+  .head{background:#14325c;color:#fff;border-radius:10px;padding:18px 20px}
+  .head h1{margin:0;font-size:20px}
+  .head p{margin:6px 0 0;font-size:13px;opacity:.85}
+  .toc{background:#fff;border-radius:10px;padding:12px 18px;margin:14px 0;font-size:13px}
+  .toc a{color:#14325c;text-decoration:none;margin-right:12px;white-space:nowrap}
+  h2{font-size:16px;color:#14325c;border-left:4px solid #c8553d;padding-left:8px;margin:26px 0 10px}
+  .card{background:#fff;border-radius:10px;padding:16px 18px;margin:0 0 12px;border:1px solid #e3ded6}
+  .meta{font-size:12px;color:#6a6f76}
+  .badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;background:#eef2f7;color:#14325c;margin-right:4px}
+  .badge.d{background:#fbeee9;color:#9a3b26}
+  .en{font-size:13px;margin:6px 0 2px}
+  .en a{color:#1f2328}
+  .ja{font-size:15px;font-weight:bold;margin:2px 0 8px}
+  .pts{margin:0;padding:0;list-style:none;font-size:14px}
+  .pts li{margin:3px 0}
+  .pts b{color:#c8553d;font-size:12px;margin-right:4px}
+  .abs{font-size:13px;color:#3d434a;background:#faf8f4;border-radius:8px;padding:10px 12px;margin-top:10px;white-space:pre-wrap}
+  .abs .lbl{font-size:11px;color:#8a8f96;display:block;margin-bottom:4px}
+  .foot{font-size:12px;color:#8a8f96;text-align:center;margin:24px 0}
+  .btn{display:inline-block;background:#c8553d;color:#fff !important;text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>週刊 文献ダイジェスト</h1>
+    <p>{{ week }} 号 ・ 新着 {{ total }} 本(PubMed 登録 {{ since }} 〜 {{ until }})</p>
+    {% if dashboard_url %}<a class="btn" href="{{ dashboard_url }}">ダッシュボードで見る・検索する</a>{% endif %}
+  </div>
+
+  {% if total == 0 %}
+  <div class="card">今週は条件に当たる新着論文はありませんでした。</div>
+  {% else %}
+  <div class="toc">
+    {% for g in groups %}<a href="#t{{ loop.index }}">{{ g.topic }}({{ g.papers|length }})</a>{% endfor %}
+  </div>
+
+  {% for g in groups %}
+  <h2 id="t{{ loop.index }}">{{ g.topic }}({{ g.papers|length }})</h2>
+  {% for p in g.papers %}
+  <div class="card">
+    <div class="meta">
+      <span class="badge d">{{ p.design }}</span>{% for t in p.topics %}<span class="badge">{{ t }}</span>{% endfor %}
+      <br>{{ p.journal }}{% if p.pubdate %} ・ {{ p.pubdate }}{% endif %}
+    </div>
+    <div class="en"><a href="https://pubmed.ncbi.nlm.nih.gov/{{ p.pmid }}/">{{ p.title }}</a></div>
+    {% if p.title_ja %}<div class="ja">{{ p.title_ja }}</div>{% endif %}
+    <ul class="pts">
+      {% for pt in p.points %}<li><b>{{ ["目的","方法","結果"][loop.index0] if loop.index0 < 3 else "" }}</b>{{ pt }}</li>{% endfor %}
+    </ul>
+    {% if p.abstract_ja %}<div class="abs"><span class="lbl">アブストラクト全訳(機械翻訳)</span>{{ p.abstract_ja }}</div>{% endif %}
+    <div class="meta" style="margin-top:8px">
+      {{ p.authors_short }}
+      ・ <a href="https://pubmed.ncbi.nlm.nih.gov/{{ p.pmid }}/">PubMed</a>
+      {% if p.doi %}・ <a href="https://doi.org/{{ p.doi }}">本文(DOI)</a>{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  {% endfor %}
+  {% endif %}
+
+  <div class="foot">要約・翻訳は Claude による自動生成です。数値や結論は必ず原文で確認してください。<br>設定の変更は config.yaml から。</div>
+</div>
+</body>
+</html>
