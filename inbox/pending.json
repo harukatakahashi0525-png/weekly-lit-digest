@@ -1,1 +1,197 @@
-[]
+[
+ {
+  "pmid": "42994604",
+  "title": "Transfer of prehospital defibrillator recordings to receiving hospitals after out-of-hospital cardiac arrest: a 16-year retrospective study in Paris.",
+  "abstract": "",
+  "authors": [
+   "Petermann A",
+   "Liscia J",
+   "Tassart B",
+   "Salomé M",
+   "Jost D",
+   "Travers S"
+  ],
+  "journal": "Resuscitation",
+  "journal_full": "Resuscitation",
+  "pubdate": "2026 Nov 06",
+  "doi": "10.1016/j.resuscitation.2026.111383",
+  "pub_types": [
+   "Letter"
+  ],
+  "tier": "all"
+ },
+ {
+  "pmid": "42989366",
+  "title": "Development and validation of methods to predict ground- and helicopter-based emergency medical service travel times.",
+  "abstract": "BACKGROUND: Helicopter-based Emergency Medical Services (EMS) are a costly and finite resource and should only be deployed when they provide substantial benefits to patients. One such benefit is a more rapid response to incidents and transport to hospital compared to Ground-based EMS. This study evaluates methods for estimating travel times for the purpose of optimizing the selection of helicopter vs. ground EMS.\nMETHODS: Ground EMS travel times were estimated using an open-source routing tool, the estimates of which were adjusted using linear regression and gradient boosting models based on historical travel times. Helicopter travel times were similarly estimated based on great circle distances adjusted by historical data. Models were evaluated using several measures of predictive accuracy to enable comparison with other studies.\nRESULTS: In validation data collected after finalization of the methods, the best performing prediction models for Ground EMS travel times explained a substantial portion of variation in drive times to location and to hospital (R2 0.79 and 0.70 respectively), and less for helicopter flight times (R2 0.46 and 0.38 respectively). Mean average percentage error was 18-20% for all investigated estimation techniques and time intervals.\nCONCLUSION: Integrating tools based on the open-source code provided with this study has the potential to improve the ability of dispatchers to estimate relative travel times and assess the potential time benefit of directing the most appropriate resources to a given patient.",
+  "authors": [
+   "Spangler D",
+   "Sheffield J",
+   "Alm J",
+   "Smekal D",
+   "Tenhunen J",
+   "Tenhunen AB"
+  ],
+  "journal": "Scand J Trauma Resusc Emerg Med",
+  "journal_full": "Scandinavian journal of trauma, resuscitation and emergency medicine",
+  "pubdate": "2026 Nov 02",
+  "doi": "10.1186/s13049-026-01722-1",
+  "pub_types": [
+   "Journal Article",
+   "Validation Study"
+  ],
+  "tier": "all"
+ },
+ {
+  "pmid": "42989388",
+  "title": "Bougie guided versus Endotracheal tube with Stylet guided intubation in critically injured patients with Difficult airway characteristics (BEST trial): randomised clinical trial.",
+  "abstract": "BACKGROUND: Emergency airway management in critically injured trauma patients is frequently complicated by distorted anatomy, airway contamination, cervical spine immobilisation, and prior airway manipulation. Although bougie and stylet are commonly used adjuncts for tracheal intubation, evidence comparing their effectiveness in difficult trauma airways remains limited. We aimed to compare first-pass intubation success between bougie-guided and stylet-guided tracheal intubation in critically injured trauma patients with predefined difficult airway characteristics.\nMETHODS: In this prospective randomised clinical trial, 188 adult critically injured trauma patients requiring emergency tracheal intubation and having at least one predefined difficult airway characteristic were randomised to bougie-guided intubation (Group B, n = 94) or stylet-guided intubation (Group S, n = 94). All first-attempt intubations were performed by trauma anaesthesia senior residents using video laryngoscopy and a standardised drug-assisted delayed sequence intubation protocol. The primary outcome was first-pass intubation success. Secondary outcomes included time to intubation, rescue airway interventions, need for alternate adjunct or front-of-neck access, and peri-intubation complications.\nRESULTS: First-pass intubation success was achieved in 67 of 94 patients (71.3%) in Group B and 63 of 94 patients (67.0%) in Group S, corresponding to an absolute difference of 4.3% points (95% CI, - 8.9 to 17.2; p = 0.53). Time to successful first-attempt intubation was similar between groups (39.55 ± 11.72 s in Group B versus 37.97 ± 13.54 s in Group S; mean difference 1.58 s, 95% CI - 2.80 to 5.97; p = 0.48). Emergency front-of-neck access was required in one patient in Group B. Oesophageal intubation occurred in five patients (5.3%) in Group S and in none in Group B; this difference did not reach statistical significance using Fisher's exact test (p = 0.059). On multivariable logistic regression, polytrauma with facial fractures was associated with increased odds of first-pass intubation failure (adjusted OR 2.54, 95% CI 1.10-5.83; p = 0.028).\nCONCLUSION: In selected trauma patients with predefined difficult-airway characteristics undergoing protocolised delayed sequence intubation with video laryngoscopy, no statistically significant difference in first-pass success was observed between bougie-guided and stylet-guided intubation. Oesophageal intubation occurred only in the stylet group, an exploratory finding that requires confirmation in larger studies.\nTRIAL REGISTRATION: The trial was approved by the Institute Ethics Committee (IEC-INT-2022/MD-543) and registered with the Clinical Trials Registry of India (CTRI/2022/11/047043).",
+  "authors": [
+   "Goyal A",
+   "Kacchap S",
+   "Singla K",
+   "Samra T",
+   "Bhatia N",
+   "Kant KR",
+   "Jain K"
+  ],
+  "journal": "Scand J Trauma Resusc Emerg Med",
+  "journal_full": "Scandinavian journal of trauma, resuscitation and emergency medicine",
+  "pubdate": "2026 Aug 10",
+  "doi": "10.1186/s13049-026-01670-w",
+  "pub_types": [
+   "Journal Article",
+   "Randomized Controlled Trial",
+   "Comparative Study"
+  ],
+  "tier": "all"
+ },
+ {
+  "pmid": "42998077",
+  "title": "Live Versus Delayed Video-Based TEAM Assessment During Real-World Cardiac Arrest: Agreement and Exploratory Differences by Rater Experience.",
+  "abstract": "STUDY OBJECTIVE: To evaluate agreement between immediate live and delayed video-based assessment of nontechnical skills during real-world adult cardiac arrest resuscitation, and whether agreement differed by rater experience.\nMETHODS: We conducted a prospective observational study of adult cardiac arrest resuscitations in a tertiary emergency department in Taiwan in 2024. For each event, one trained physician or nurse who participated in the resuscitation completed the Team Emergency Assessment Measure (TEAM) immediately afterward and re-rated the same event from video approximately 30 days later. Live-video agreement was assessed using intraclass correlation coefficients and Bland-Altman analysis.\nRESULTS: Of 105 recorded resuscitations, 80 had complete paired assessments. Mean global ratings were similar between modalities (8.25 versus 8.22; mean paired difference, -0.03; 95% confidence interval [CI] -0.25 to 0.20), whereas teamwork scores were modestly lower on video review (mean paired difference, -1.00; 95% CI -1.77 to -0.23). Event-level agreement was limited: intraclass correlation coefficients were 0.21 (95% CI 0.00 to 0.41) for total TEAM score and 0.16 (95% CI -0.06 to 0.37) for global rating. Total TEAM video ratings averaged 1.24 points lower than live ratings, with limits of agreement from -12.28 to 9.80. Agreement was higher among senior raters.\nCONCLUSION: Delayed video-based TEAM assessment produced similar group-level scores but limited event-level agreement during real-world cardiac arrest. Agreement appeared higher among senior raters. Video review may support debriefing and monitoring, but appraisal of a specific resuscitation or other higher stakes use likely requires experienced raters and structured safeguards.",
+  "authors": [
+   "Lien CJ",
+   "Yu PH",
+   "Huang SK",
+   "Chang JH",
+   "Pei-Chuan Huang E"
+  ],
+  "journal": "Ann Emerg Med",
+  "journal_full": "Annals of emergency medicine",
+  "pubdate": "2026 Nov 06",
+  "doi": "10.1016/j.annemergmed.2026.09.032",
+  "pub_types": [
+   "Journal Article"
+  ],
+  "tier": "filtered"
+ },
+ {
+  "pmid": "42998080",
+  "title": "Survival From Traumatic Cardiac Arrest After Sequential Decompression of Dual-Tension Thoracic Physiology Without Chest Compressions.",
+  "abstract": "Traumatic pulseless electrical activity arrest from simultaneous dual-tension thoracic physiology-bilateral tension pneumothorax and tension pneumomediastinum-with concurrent oropharyngeal hematoma causing airway obstruction has not been described as a unified presentation in the published literature. We report a 28-year-old male who sustained penetrating machete injuries producing this presentation and arrested in pulseless electrical activity on arrival. A sequential surgical resuscitation was performed without external chest compressions: hemostasis and evacuation of an oropharyngeal hematoma restored ventilation, with return of peripheral photoplethysmographic signal consistent with pseudo-pulseless electrical activity physiology; bilateral finger thoracostomies achieved pleural decompression; digital exploration through the manubrial wound vented tension pneumomediastinum, producing an audible air rush, immediate resolution of jugular venous distension, and confirmed return of spontaneous circulation. The patient ambulated independently within hours of arrest and was discharged neurologically intact on day 7. This case illustrates that mechanically mediated pulseless electrical activity arrest from dual thoracic obstructive physiology may be reversible by sequential surgical decompression, and that persistent jugular venous distension following pleural decompression may signal residual mediastinal tension warranting urgent decompression.",
+  "authors": [
+   "Kidane YM",
+   "Shimber ET",
+   "Wendwosen M",
+   "Mukunzenkase G"
+  ],
+  "journal": "Ann Emerg Med",
+  "journal_full": "Annals of emergency medicine",
+  "pubdate": "2026 Sep 22",
+  "doi": "10.1016/j.annemergmed.2026.09.010",
+  "pub_types": [
+   "Case Reports",
+   "Journal Article"
+  ],
+  "tier": "filtered"
+ },
+ {
+  "pmid": "42998307",
+  "title": "Smart Alerting in Smartphone-Based First Responder Systems and Arrival Before Emergency Medical Services:The ALARM Randomized Clinical Trial.",
+  "abstract": "BACKGROUND: Smartphone alerting systems (SAS) aim to increase the proportion of out-of-hospital cardiac arrest (OHCA) cases in which a community first responder (CFR) arrives before emergency medical services (EMS). Many use fixed-radius alerts and ignore estimated arrival times. We compared different alerting strategies to maximize CFR arrival before EMS.\nMETHODS: In a prospective, randomized three-arm trial, smart alerting (SMA) was compared with fixed-radius strategies (600 m and 2500 m). The primary endpoint was the rate of CFR arrival before EMS. In the SMA arm, responders were dispatched based on individually estimated travel times versus expected ambulance time. Binary endpoints were analyzed using chi-square tests, reporting risk differences and 95% confidence intervals; continuous endpoints used non-parametric tests.\nRESULTS: Across 823 activations, 1482 CFR were dispatched. CFR arrived before EMS in 31%, 57%, and 58% of missions in the 600 m, 2500 m, and SMA groups, respectively. Compared with the 600 m strategy, SMA increased pre-EMS arrival (risk difference +26.8%, 95% CI 18.6-34.4; p < 0.001), whereas no significant difference was observed compared with the 2500 m strategy (risk difference +1.2%, 95% CI -7.0-+9.3; p = 0.80). Response rates were 56%, 83%, and 87%, respectively. In the SMA group, 31% of accepting CFR were excluded because predicted arrival exceeded EMS arrival. Response times were longer with smart alerting reflecting greater dispatch distances.\nCONCLUSIONS: Smart alerting increased the likelihood of CFR arriving before EMS while reducing dispatches unlikely to achieve pre-EMS arrival. Further research should evaluate its impact on patient outcomes.",
+  "authors": [
+   "Ganter J",
+   "Gronewald J",
+   "Heller AR",
+   "Trummer G",
+   "Brucklacher T",
+   "Schmitz D",
+   "Busch HJ",
+   "Mueller MP"
+  ],
+  "journal": "J Am Heart Assoc",
+  "journal_full": "Journal of the American Heart Association",
+  "pubdate": "2026 Nov 07",
+  "doi": "10.1161/JAHA.126.051900",
+  "pub_types": [
+   "Journal Article"
+  ],
+  "tier": "any"
+ },
+ {
+  "pmid": "42992909",
+  "title": "Molecular Features of Heatstroke Revealed by Integrated Proteomics and Metabolomics.",
+  "abstract": "Heatstroke is a critical medical condition marked by hyperthermia-induced immune dysregulation, endothelial damage, and organ dysfunction, yet its molecular mechanisms are not fully elucidated. In this study, serum samples from heatstroke (HS) patients and normal controls (NCs) were subjected to untargeted ultrahigh-performance liquid chromatography-tandem mass spectrometry (UHPLC-MS/MS) metabolomic and quantitative proteomic analyses. Differential proteins and metabolites were identified and further analyzed through pathway enrichment, protein-protein interaction, correlation, and integrated multivariate analyses. Compared to NC, HS patients demonstrated 161 differential proteins (136 up-regulated, 25 down-regulated) and 427 differential metabolites (330 up-regulated, 97 down-regulated). The proteins B2M, MMP9, and APOB were identified as key hub proteins linked to immune activation, endothelial injury, and lipid metabolism. Metabolic changes were observed in kynurenine, purine, and mitochondrial energy metabolism pathways, while lipid metabolites showed an inverse correlation with inflammatory proteins. Integrated principal component analysis (PCA) and canonical correlation analysis (CCA) effectively distinguished HS patients from the NC. Through joint pathway analysis, 30 enriched KEGG pathways were identified, notably including cAMP signaling and arachidonic acid metabolism. These findings elucidate coordinated alterations in immune, vascular, and metabolic processes associated with heatstroke, and underscore B2M, MMP9, and ANGPTL3 as potential molecular features warranting further investigation.",
+  "authors": [
+   "Guo D",
+   "Yin D",
+   "Li H",
+   "Guo Q",
+   "Hu Y",
+   "Zhang Y",
+   "Hu Y",
+   "Jin K",
+   "Zhang L"
+  ],
+  "journal": "J Proteome Res",
+  "journal_full": "Journal of proteome research",
+  "pubdate": "2026 Nov 06",
+  "doi": "10.1021/acs.jproteome.5c00450",
+  "pub_types": [
+   "Journal Article"
+  ],
+  "tier": "any"
+ },
+ {
+  "pmid": "42996796",
+  "title": "Results of Operating the 2025 \"Heat-related Illness Emergency Department Surveillance System\".",
+  "abstract": "OBJECTIVES: This study aimed to analyze the characteristics and health impacts of heat-related illnesses during the summer of 2025 in the Republic of Korea and to provide evidence for prevention and response measures to minimize heat-related health risks associated with climate change.\nMETHODS: Since 2011, the Korea Disease Control and Prevention Agency (KDCA) has operated the nationwide \"Heat-related Illness Emergency Department Surveillance System.\" Between May 15 and September 25, 2025, data on patients with heat-related illnesses and suspected heat-related deaths were collected from 517 participating emergency departments through the \"Disease and Health Integrated Management System.\" These data were analyzed based on major epidemiological characteristics, including sex, age, type of illness, region, and place of occurrence. Daily surveillance results were publicly released on the KDCA website.\nRESULTS: A total of 4,460 heat-related illness cases and 29 suspected deaths were reported in 2025. Compared with 2024, the cases increased by 20.4%, whereas suspected deaths decreased by 14.7%. Most patients were male (79.7%), with individuals aged 50-59 years accounting for the largest proportion of cases (19.4%). Older adults aged ≥65 years accounted for 30.1% of all cases and 58.6% of deaths. Heat exhaustion was the most common diagnosis (62.0%), and most incidents occurred outdoors (79.2%), particularly in workplaces (32.1%) and farms (12.2%) or fields.\nCONCLUSIONS: Heat-related illnesses predominantly affected older adults and outdoor workers during the summer of 2025. Strengthening prevention measures targeting vulnerable populations, timely dissemination of public information, and interagency collaboration are needed to reduce the growing health impacts of heat waves associated with climate change.",
+  "authors": [
+   "Chae J",
+   "Jung E",
+   "An D",
+   "Ahn Y"
+  ],
+  "journal": "Public Health Wkly Rep",
+  "journal_full": "Public health weekly report",
+  "pubdate": "2026",
+  "doi": "10.56786/PHWR.2026.19.42.2",
+  "pub_types": [
+   "Journal Article"
+  ],
+  "tier": "any"
+ },
+ {
+  "pmid": "42997316",
+  "title": "Trimethylamine N-oxide (TMAO) in heat stroke: molecular mechanisms from gut dysbiosis to multi-organ injury.",
+  "abstract": "Heat stroke, a life-threatening condition characterized by core hyperthermia (≥40 °C), central nervous system dysfunction, and multi-organ failure with mortality rates of 20-70%, is increasingly recognized as a systemic inflammatory and hemodynamic disorder rather than a purely thermoregulatory collapse. Among the emerging mediators of its pathophysiology, trimethylamine N-oxide (TMAO)-a gut microbiota-derived metabolite generated from dietary choline, L-carnitine, and betaine-has attracted growing attention as a molecular link between heat-induced gut dysbiosis and multi-organ injury. This review synthesizes current evidence on the physiological and molecular mechanisms whereby TMAO is proposed to aggravate heat stroke pathology, including: (1) NLRP3 inflammasome activation via ROS-TXNIP, SIRT3-SOD2-mtROS, and cathepsin B-mediated pathways; (2) endothelial dysfunction through tight junction disruption, eNOS/NO suppression, and ALDH2/ROS/GSDMD-dependent pyroptosis; (3) platelet hyperreactivity and thrombosis through enhanced Ca2+ mobilization and IP3 signaling; (4) mitochondrial oxidative stress and bioenergetic failure; and (5) neuroinflammation via the gut-brain axis. We further discuss the concentration-dependent duality of TMAO as a chemical chaperone versus a pathological mediator, and evaluate translational strategies targeting TMAO metabolism, including gut microbiota modulation, TMA lyase inhibition, and NLRP3 blockade. Importantly, the majority of the mechanistic evidence synthesized herein derives from disease models other than heat stroke (e.g., atherosclerosis, chronic kidney disease, obesity, aging, preeclampsia, and ischemic stroke); direct evidence obtained in heat-stroke settings remains limited, and several proposed pathways should be regarded as hypotheses awaiting heat-stroke-specific validation. Elucidating TMAO-dependent mechanisms may therefore inform future biomarker development and therapeutic investigation-both of which require clinical validation in heat-stroke patients-in this increasingly prevalent climate-sensitive disease.",
+  "authors": [
+   "Wu Q",
+   "Lin G",
+   "Ou Y",
+   "Ji B",
+   "Pan Z",
+   "Shao Y"
+  ],
+  "journal": "Front Physiol",
+  "journal_full": "Frontiers in physiology",
+  "pubdate": "2026",
+  "doi": "10.3389/fphys.2026.1983362",
+  "pub_types": [
+   "Journal Article",
+   "Review"
+  ],
+  "tier": "any"
+ }
+]
